@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="landing.css">
+    <link rel="shortcut icon" href="IIITU logo.png" type="image/x-icon">
+    <title>Student Registration</title>
+</head>
+<body>
+    <div class="background-image">
+        <div class="login-container">
+            <h1>Student Registration</h1>
+            <div>
+                <form class="login-form" id="registration-form">
+                    <label for="firstname">Full Name:</label>
+                    <input type="text" id="firstname" name="name" required>
+
+                    <label for="DOB">DOB:</label>
+                    <input type="date" name="dob" id="DOB" required>
+
+                    <label for="mygender">Gender:</label>
+                    <input type="radio" name="gender" value="Male" required> Male
+                    <input type="radio" name="gender" value="Female" required> Female
+                    <input type="radio" name="gender" value="Other" required> Other
+
+                    <label for="instituename">Institute Name:</label>
+                    <input type="text" id="instituename" name="Iname" required>
+
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" required>
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="studentid">Student ID:</label>
+                    <input type="text" id="studentid" name="SID" required>
+
+                    <label for="educationalrole">Educational role:</label>
+                    <select id="educationalrole" name="Erole" required>
+                        <option value="">Select role</option>
+                        <option value="UG">UG</option>
+                        <option value="PG">PG</option>
+                        <option value="PHD">PHD</option>
+                    </select>
+
+                    <label for="year">Year of Enrollment:</label>
+                    <input type="number" id="year" name="yearOfEnroll" min="2000" max="2099" required>
+
+                    <label for="department">Department:</label>
+                    <select id="department" name="dept" required>
+                        <option value="">Select Department</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Electrical Engineering">Electrical Engineering</option>
+                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        <option value="Others">Others</option>
+                    </select>
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <label for="confirm-password">Confirm Password:</label>
+                    <input type="password" id="confirm-password" name="cpassword" required>
+                    <p id="password-mismatch-message" style="color: red; display: none;">Passwords do not match</p>
+
+                    <label for="mobile-number">Mobile-number:</label>
+                    <input type="tel" id="mobile-number" name="phone" required>
+
+
+
+                    <button type="button" onclick="registerUser()">
+                        Register
+                    </button>
+                    <button type="reset" onclick="resetRadio(); reset();">Reset</button>
+                </form>
+            </div>
+        </div>
+    </div>
+<script src="register.js"></script>
+    <script>
+        async function registerUser() {
+            try {
+                const firstname = document.getElementById("firstname").value;
+                const dob = document.getElementById("DOB").value;
+                const gender = document.querySelector('input[name="gender"]:checked').value;
+                const instituename = document.getElementById("instituename").value;
+                const state = document.getElementById("state").value;
+                const email = document.getElementById("email").value;
+                const studentid = document.getElementById("studentid").value;
+                const educationalrole = document.getElementById("educationalrole").value;
+                const year = document.getElementById("year").value;
+                const department = document.getElementById("department").value;
+                const password = document.getElementById("password").value;
+                const confirmPassword = document.getElementById("confirm-password").value;
+                const mobileNumber = document.getElementById("mobile-number").value;
+
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    document.getElementById("password-mismatch-message").style.display = "block";
+                    return;
+                }
+console.log(1);
+                // Create an object with the form data
+                const userData = {
+                    name: firstname,
+                    dob: dob,
+                    gender: gender,
+                    Iname: instituename,
+                    state: state,
+                    email: email,
+                    SID: studentid,
+                    Erole: educationalrole,
+                    yearOfEnroll: year,
+                    dept: department,
+                    password: password,
+                    phone: mobileNumber
+                };
+console.log(1);
+                const response = await fetch("http://localhost:5000/api/auth/registration", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        alert("Registration successful");   
+                        window.location.href = "home.html";
+                        localStorage.setItem('userToken', data.token)
+                    } else {
+                        alert("Registration failed");
+                    }
+                } else {
+                    alert("Please Enter Valid Credentials: " );
+                    // alert("Server error: " + response.status);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        
+    </script>
+</body>
+</html>
